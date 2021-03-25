@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
-using System.Text;
 
 namespace Aweform {
 
 	//
-	// AweformAPI
+	// AweformAPI.Net
+	// AweformAPI.Net depends on AweformJSON.Net which you can get from GitHub at
+	// https://github.com/Aweform/AweformJSON.Net
 	////////////////////////////////////////////////////////////////////////////////////
 
 		public class AweformException : Exception {
@@ -96,7 +97,7 @@ namespace Aweform {
 				return AweformWorkspacesFromJSON(RequestPaged("/workspaces/", from, count));
 			}
 
-			private static AweformUser AweformUserFromJSON(AweformJSON.Component json) {
+			private static AweformUser AweformUserFromJSON(AweformJSON.Element json) {
 
 				AweformUser user = new AweformUser();
 				user.Id = json.GetAttributeAsInt64("id");
@@ -107,11 +108,11 @@ namespace Aweform {
 				return user;
 			}
 
-			private static List<AweformForm> AweformFormsFromJSON(AweformJSON.Component json) {
+			private static List<AweformForm> AweformFormsFromJSON(AweformJSON.Element json) {
 
 				List<AweformForm> forms = new List<AweformForm>();
 
-				foreach (AweformJSON.Component jsonForm in json.Values) {
+				foreach (AweformJSON.Element jsonForm in json.Elements) {
 
 					forms.Add(AweformFormFromJSON(jsonForm));
 				}
@@ -119,7 +120,7 @@ namespace Aweform {
 				return forms;
 			}
 
-			private static AweformForm AweformFormFromJSON(AweformJSON.Component json) {
+			private static AweformForm AweformFormFromJSON(AweformJSON.Element json) {
 			
 				AweformForm form = new AweformForm();
 				form.Id = json.GetAttributeAsInt64("id");
@@ -129,11 +130,11 @@ namespace Aweform {
 				return form;
 			}
 
-			private static List<AweformWorkspace> AweformWorkspacesFromJSON(AweformJSON.Component json) {
+			private static List<AweformWorkspace> AweformWorkspacesFromJSON(AweformJSON.Element json) {
 
 				List<AweformWorkspace> workspaces = new List<AweformWorkspace>();
 
-				foreach (AweformJSON.Component jsonForm in json.Values) {
+				foreach (AweformJSON.Element jsonForm in json.Elements) {
 
 					workspaces.Add(AweformWorkspaceFromJSON(jsonForm));
 				}
@@ -141,7 +142,7 @@ namespace Aweform {
 				return workspaces;
 			}
 
-			private static AweformWorkspace AweformWorkspaceFromJSON(AweformJSON.Component json) {
+			private static AweformWorkspace AweformWorkspaceFromJSON(AweformJSON.Element json) {
 			
 				AweformWorkspace workspace = new AweformWorkspace();
 				workspace.Id = json.GetAttributeAsInt64("id");
@@ -150,11 +151,11 @@ namespace Aweform {
 				return workspace;
 			}
 
-			private static List<AweformResponse> AweformResponsesFromJSON(AweformJSON.Component json) {
+			private static List<AweformResponse> AweformResponsesFromJSON(AweformJSON.Element json) {
 
 				List<AweformResponse> responses = new List<AweformResponse>();
 
-				foreach (AweformJSON.Component jsonForm in json.Values) {
+				foreach (AweformJSON.Element jsonForm in json.Elements) {
 
 					responses.Add(AweformResponseFromJSON(jsonForm));
 				}
@@ -162,7 +163,7 @@ namespace Aweform {
 				return responses;
 			}
 
-			private static AweformResponse AweformResponseFromJSON(AweformJSON.Component json) {
+			private static AweformResponse AweformResponseFromJSON(AweformJSON.Element json) {
 			
 				AweformResponse response = new AweformResponse();
 				response.Id = json.GetAttributeAsInt64("id");
@@ -170,9 +171,9 @@ namespace Aweform {
 				response.FormId = json.GetAttributeAsInt64("formId");
 				response.WorkspaceId = json.GetAttributeAsInt64("workspaceId");
 
-				List<AweformJSON.Component> attributes = json.GetAttributes();
+				List<AweformJSON.Element> attributes = json.GetAttributes();
 
-				foreach (AweformJSON.Component attribute in attributes) {
+				foreach (AweformJSON.Element attribute in attributes) {
 
 					if (attribute.Name == "id" || attribute.Name == "dateInUTC" || attribute.Name == "formId" || attribute.Name == "workspaceId") {
 
@@ -189,11 +190,11 @@ namespace Aweform {
 				return response;
 			}
 
-			private static List<AweformFormDefinition> AweformFormDefinitionsFromJSON(AweformJSON.Component json) {
+			private static List<AweformFormDefinition> AweformFormDefinitionsFromJSON(AweformJSON.Element json) {
 
 				List<AweformFormDefinition> formsDefinitions = new List<AweformFormDefinition>();
 
-				foreach (AweformJSON.Component jsonForm in json.Values) {
+				foreach (AweformJSON.Element jsonForm in json.Elements) {
 
 					formsDefinitions.Add(AweformFormDefinitionFromJSON(jsonForm));
 				}
@@ -201,16 +202,16 @@ namespace Aweform {
 				return formsDefinitions;
 			}
 
-			private static AweformFormDefinition AweformFormDefinitionFromJSON(AweformJSON.Component json) {
+			private static AweformFormDefinition AweformFormDefinitionFromJSON(AweformJSON.Element json) {
 			
 				AweformFormDefinition formDefinition = new AweformFormDefinition();
 				formDefinition.Id = json.GetAttributeAsInt64("id");
 				formDefinition.Name = json.GetAttributeAsString("name");
 				formDefinition.WorkspaceId = json.GetAttributeAsInt64("workspaceId");
 
-				AweformJSON.Component components = json.GetAttribute("components");
+				AweformJSON.Element components = json.GetAttribute("components");
 
-				foreach (AweformJSON.Component component in components.Values) {
+				foreach (AweformJSON.Element component in components.Elements) {
 
 					AweformFormComponent formComponent = new AweformFormComponent();
 					formComponent.Name = component.GetAttributeAsString("name");
@@ -220,9 +221,9 @@ namespace Aweform {
 
 						formComponent.Options = new List<String>();
 
-						AweformJSON.Component options = component.GetAttribute("options");
+						AweformJSON.Element options = component.GetAttribute("options");
 
-						foreach (AweformJSON.Component option in options.Values) {
+						foreach (AweformJSON.Element option in options.Elements) {
 
 							formComponent.Options.Add(option.Value);
 						}
@@ -234,7 +235,7 @@ namespace Aweform {
 				return formDefinition;
 			}
 
-			private AweformJSON.Component RequestPaged(String url, Int32 from, Int32 count) {
+			private AweformJSON.Element RequestPaged(String url, Int32 from, Int32 count) {
 
 				Int32 startPage = (from / 100);
 				Int32 endPage = ((from + count - 1) / 100);
@@ -243,11 +244,11 @@ namespace Aweform {
 
 				Int32 page = startPage;
 
-				AweformJSON.Component paged = null;
+				AweformJSON.Element paged = null;
 
 				while (page <= endPage) {
 
-					AweformJSON.Component singlePage = Request(url + "?page=" + page);
+					AweformJSON.Element singlePage = Request(url + "?page=" + page);
 
 					if (paged == null) {
 
@@ -255,13 +256,13 @@ namespace Aweform {
 
 					} else {
 
-						foreach (AweformJSON.Component component in singlePage.Values) {
+						foreach (AweformJSON.Element component in singlePage.Elements) {
 
-							paged.Values.Add(component);
+							paged.Elements.Add(component);
 						}
 					}
 
-					if (singlePage.Values.Count == 0) {
+					if (singlePage.Elements.Count == 0) {
 
 						break;
 					}
@@ -273,12 +274,12 @@ namespace Aweform {
 
 				if (from > 0) {
 
-					paged.Values.RemoveRange(0, from);
+					paged.Elements.RemoveRange(0, from);
 				}
 
-				if (count < paged.Values.Count) {
+				if (count < paged.Elements.Count) {
 
-					paged.Values.RemoveRange(count, paged.Values.Count - count);
+					paged.Elements.RemoveRange(count, paged.Elements.Count - count);
 				}
 
 				if (paged == null) {
@@ -289,14 +290,14 @@ namespace Aweform {
 				return paged;		
 			}
 
-			protected AweformJSON.Component Request(String url) {
+			protected AweformJSON.Element Request(String url) {
 
 				WebClient wc = new WebClient();
 
 				String response = wc.DownloadString(APIURL + url + (url.Contains("?", StringComparison.InvariantCulture) ? "&" : "?") + "apiKey=" + APIKey);
 				wc.Dispose();
 
-				AweformJSON.Component component = AweformJSON.Parse(response);
+				AweformJSON.Element component = AweformJSON.Parse(response);
 
 				if (component.GetAttribute("error") != null) {
 
@@ -386,531 +387,6 @@ namespace Aweform {
 			public AweformFormComponent() {
 
 				Options = null;
-			}
-		}
-
-
-
-	//
-	// AweformJSON
-	// To avoid dependencies we include a simple JSON parser
-	////////////////////////////////////////////////////////////////////////////////////
-
-		public static class AweformJSON {
-
-			public enum Token {
-
-				EndOrUnknown,
-				ObjectStart,
-				ObjectEnd,
-				ArrayStart,
-				ArrayEnd,
-				Colon,
-				Comma,
-				String,
-				Number,
-				True,
-				False,
-				Null
-			}
-
-			public enum ComponentType {
-
-				String,
-				Number,
-				Object,
-				Array,
-				Boolean,
-				Null
-			}
-
-			public class Component {
-
-				public ComponentType Type { get; set; }
-				public String Name { get; set; }
-				public String Value { get; set; }						// String, Number, true, false, null as a String
-				public List<Component> Values { get; set; }				// Attributes if "Object", Items if "Array"
-
-				public Component(ComponentType type, String value = null) {
-
-					Type = type;
-					Values = null;
-					Value = value;
-				}
-
-				public String GetAttributeAsString(String name, String defaultValue = "") {
-
-					Component attribute = GetAttribute(name);
-
-					if (attribute == null || attribute.Value == null) { 
-				
-						return defaultValue;
-					}
-
-					return attribute.Value;
-				}
-
-				public Int64 GetAttributeAsInt64(String name, Int64 defaultValue = 0) {
-
-					Component attribute = GetAttribute(name);
-
-					if (attribute == null || attribute.Value == null) {
-
-						return defaultValue;
-					}
-
-					Int64 int64;
-
-					if (Int64.TryParse(attribute.Value, out int64)) {
-
-						return int64;
-
-					} else {
-
-						return defaultValue;
-					}
-				}
-
-				public Component GetAttribute(String name) {
-
-					if (Type != ComponentType.Object) {
-
-						return null;
-					}
-
-					foreach (Component value in Values) {
-
-						if (value.Name == name) {
-
-							return value;
-						}
-					}
-
-					return null;
-				}
-
-				public List<Component> GetAttributes() {
-
-					if (Type != ComponentType.Object) {
-
-						return null;
-					}
-
-					return Values;
-				}
-			}
-		
-			public static Component Parse(String json) {
-						
-				if (json != null) {
-			
-					Int32 ix = 0;
-					Boolean success = true;
-
-					Component jsonComponent = ParseValue(json.ToCharArray(), ref ix, ref success);
-
-					if (success) {
-
-						return jsonComponent;
-
-					} else {
-
-						return null;
-					}
-			
-				} else {
-			
-					return null;
-				}
-			}
-
-			private static Component ParseObject(Char[] chars, ref Int32 ix, ref Boolean success) {
-			
-				Component component = new Component(ComponentType.Object);
-			
-				GetNextToken(chars, ref ix); // skip {
-
-				Boolean done = false;
-			
-				while (!done) {
-
-					Token nextToken = PeekNextToken(chars, ix);
-
-					if (nextToken == Token.EndOrUnknown) {
-
-						success = false;
-						return null;
-
-					} else if (nextToken == Token.Comma) {
-
-						GetNextToken(chars, ref ix); // skip ,
-
-					} else if (nextToken == Token.ObjectEnd) {
-
-						GetNextToken(chars, ref ix); // skip }
-						return component;
-
-					} else if (nextToken == Token.String) {
-
-						String name = ParseString(chars, ref ix, ref success);
-
-						if (!success) {
-
-							return null;
-						}
-
-						nextToken = GetNextToken(chars, ref ix);
-
-						if (nextToken != Token.Colon) {
-
-							success = false;
-							return null;
-						}
-
-						Component value = ParseValue(chars, ref ix, ref success);
-					
-						if (!success) {
-					
-							return null;
-						}
-
-						value.Name = name;
-
-						if (component.Values == null) {
-
-							component.Values = new List<Component>();
-						}
-
-						component.Values.Add(value);
-
-					} else {
-
-						success = false;
-					}
-				}
-
-				return component;
-			}
-
-			private static Component ParseArray(Char[] chars, ref Int32 ix, ref Boolean success) {
-
-				Component component = new Component(ComponentType.Array);
-				component.Values = new List<Component>();
-
-				GetNextToken(chars, ref ix); // skip [
-
-				while (true) {
-
-					Token token = PeekNextToken(chars, ix);
-
-					if (token == Token.EndOrUnknown) {
-				
-						success = false;
-						return null;
-
-					} else if (token == Token.Comma) {
-
-						GetNextToken(chars, ref ix); // skip ,
-
-					} else if (token == Token.ArrayEnd) {
-					
-						GetNextToken(chars, ref ix); // skip ]
-						break;
-
-					} else {
-
-						component.Values.Add(ParseValue(chars, ref ix, ref success));
-				
-						if (!success) {
-				
-							return null;
-						}
-					}
-				}
-
-				return component;
-			}
-
-			private static Component ParseValue(Char[] chars, ref Int32 ix, ref Boolean success) {
-
-				Component component = null;
-
-				Token nextToken = PeekNextToken(chars, ix);
-
-				if (nextToken == Token.String) {
-
-					component = new Component(ComponentType.String, ParseString(chars, ref ix, ref success));
-
-				} else if (nextToken == Token.Number) {
-
-					component = ParseNumber(chars, ref ix, ref success);
-
-				} else if (nextToken == Token.ObjectStart) {
-
-					component = ParseObject(chars, ref ix, ref success);
-
-				} else if (nextToken == Token.ArrayStart) {
-
-					component = ParseArray(chars, ref ix, ref success);
-					
-				} else if (nextToken == Token.True || nextToken == Token.False) {
-
-					GetNextToken(chars, ref ix);
-
-					component = new Component(ComponentType.Boolean, (nextToken == Token.True)? "true" : "false");
-
-				} else if (nextToken == Token.Null) {
-
-					GetNextToken(chars, ref ix);
-
-					component = new Component(ComponentType.Null, "null");
-
-				} else {
-
-					success = false;
-				}
-
-				return component;
-			}
-
-			private static String ParseString(Char[] chars, ref Int32 ix, ref Boolean success) {
-			
-				StringBuilder sb = new StringBuilder();
-
-				SkipWhitespace(chars, ref ix);
-
-				ix++; // skip "
-
-				Boolean complete = false;
-
-				while (!complete) {
-
-					if (ix == chars.Length) {
-
-						break;
-					}
-
-					Char c = chars[ix++];
-
-					if (c == '"') {
-
-						complete = true;
-						break;
-
-					} else if (c == '\\') {
-
-						if (ix == chars.Length) {
-					
-							break;
-						}
-
-						c = chars[ix++];
-
-						if (c == '"') {
-
-							sb.Append('"');
-
-						} else if (c == '\\') {
-						
-							sb.Append('\\');
-
-						} else if (c == '/') {
-						
-							sb.Append('/');
-
-						} else if (c == 'b') {
-						
-							sb.Append('\b');
-
-						} else if (c == 'f') {
-						
-							sb.Append('\f');
-
-						} else if (c == 'n') {
-						
-							sb.Append('\n');
-
-						} else if (c == 'r') {
-						
-							sb.Append('\r');
-
-						} else if (c == 't') {
-						
-							sb.Append('\t');
-
-						} else if (c == 'u') {
-						
-							Int32 remainingLength = chars.Length - ix;
-						
-							if (remainingLength >= 4) {
-						
-								Int32 codePoint;
-
-								if (!Int32.TryParse(new String(chars, ix, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codePoint)) {
-
-									success = false;
-									return "";
-								}
-							
-								sb.Append(Char.ConvertFromUtf32((Int32)codePoint));
-							
-								ix += 4;
-
-							} else {
-
-								break;
-							}
-						}
-
-					} else {
-
-						sb.Append(c);
-					}
-				}
-
-				if (!complete) {
-				
-					success = false;
-					return null;
-				}
-
-				return sb.ToString();
-			}
-
-			private static Component ParseNumber(Char[] chars, ref Int32 ix, ref Boolean success) {
-
-				SkipWhitespace(chars, ref ix);
-
-				Int32 lastNumberCharacterIndex;
-				String numberCharacters = "0123456789-.eE";
-
-				for (lastNumberCharacterIndex = ix; lastNumberCharacterIndex < chars.Length; ++lastNumberCharacterIndex) {
-			
-					if (!numberCharacters.Contains(chars[lastNumberCharacterIndex], StringComparison.Ordinal)) {
-			
-						break;
-					}
-				}
-
-				lastNumberCharacterIndex -= 1;
-
-				Int32 charLength = (lastNumberCharacterIndex - ix) + 1;
-
-				Double number;
-				success = Double.TryParse(new String(chars, ix, charLength), NumberStyles.Any, CultureInfo.InvariantCulture, out number);
-
-				ix = lastNumberCharacterIndex + 1;
-
-				Component component = new Component(ComponentType.Number);
-				component.Value = number.ToString(CultureInfo.InvariantCulture);
-
-				return component;
-			}
-
-			private static void SkipWhitespace(Char[] chars, ref Int32 ix) {
-			
-				while (ix < chars.Length) {
-
-					Char c = chars[ix];
-
-					if (c != ' ' && c != '\t' && c != '\n' && c != '\r') {
-
-						break;
-					}
-
-					ix++;
-				}
-			}
-
-			private static Token PeekNextToken(Char[] chars, Int32 ix) {
-			
-				Int32 peekFromIndex = ix;
-				return GetNextToken(chars, ref peekFromIndex);
-			}
-
-			private static Boolean ForwardMatch(String what, Char[] chars, ref Int32 ix) {
-
-				Int32 remainingLength = chars.Length - ix;
-
-				if (remainingLength >= what.Length) {
-
-					for (Int32 i = 0; i < what.Length; ++i) {
-
-						if (chars[ix + i] != what[i]) {
-
-							return false;
-						}
-					}
-
-					ix += what.Length;
-					return true;
-				}
-
-				return false;
-			}
-
-			private static Token GetNextToken(Char[] chars, ref Int32 ix) {
-			
-				SkipWhitespace(chars, ref ix);
-
-				if (ix == chars.Length) {
-			
-					return Token.EndOrUnknown;
-				}
-
-				Char c = chars[ix++];
-			
-				if (c == '{') {
-					
-					return Token.ObjectStart;
-				
-				} else if (c == '}') {
-
-					return Token.ObjectEnd;
-
-				} else if (c == '[') {
-
-					return Token.ArrayStart;
-
-				} else if (c == ']') {
-
-					return Token.ArrayEnd;
-
-				} else if (c == ':') {
-
-					return Token.Colon;
-
-				} else if (c == ',') {
-
-					return Token.Comma;
-
-				} else if (c == '"') {
-
-					return Token.String;
-
-				} else if ("-0123456789".Contains(c, StringComparison.Ordinal)) {
-
-					return Token.Number;
-				}
-
-				ix--;
-
-				if (ForwardMatch("false", chars, ref ix)) {
-
-					return Token.False;
-
-				} else if (ForwardMatch("true", chars, ref ix)) {
-
-					return Token.True;
-
-				} else if (ForwardMatch("null", chars, ref ix)) {
-
-					return Token.Null;
-
-				} else {
-
-					return Token.EndOrUnknown;
-				}
 			}
 		}
 }
